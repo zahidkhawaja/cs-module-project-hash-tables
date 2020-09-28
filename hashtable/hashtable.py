@@ -21,7 +21,8 @@ class HashTable:
     """
 
     def __init__(self, capacity):
-        # Your code here
+        self.capacity = MIN_CAPACITY
+        self.hash_table = [None] * self.capacity
 
 
     def get_num_slots(self):
@@ -34,7 +35,7 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        return self.capacity
 
 
     def get_load_factor(self):
@@ -62,7 +63,16 @@ class HashTable:
 
         Implement this, and/or FNV-1.
         """
-        # Your code here
+
+        # The reason we use 5381 is because it happens to be a "magic constant" that results in few collisions :P
+        hash = 5381
+
+        for x in key:
+            # Bitwise shift operator <<
+            # Bits shifted to the left by 5 places
+            hash = ((hash << 5) + ord(x))
+        
+        return hash
 
 
     def hash_index(self, key):
@@ -70,7 +80,8 @@ class HashTable:
         Take an arbitrary key and return a valid integer index
         between within the storage capacity of the hash table.
         """
-        #return self.fnv1(key) % self.capacity
+        # Not using fnv1
+        # return self.fnv1(key) % self.capacity
         return self.djb2(key) % self.capacity
 
     def put(self, key, value):
@@ -81,7 +92,11 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        key_sum = self.hash_index(key)
+
+        self.hash_table[key_sum] = value
+        
+        return f'{value} inserted at {key_sum} in the hash table.'
 
 
     def delete(self, key):
@@ -92,7 +107,11 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        key_hashed = self.hash_index(key)
+
+        deleted = self.hash_table[key_hashed]
+
+        self.hash_table[key_hashed] = None
 
 
     def get(self, key):
@@ -103,7 +122,7 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        return self.hash_table[self.hash_index(key)]
 
 
     def resize(self, new_capacity):
